@@ -4,7 +4,7 @@ import { AccountCircle, Https, Menu } from '@mui/icons-material';
 import { styled } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import httpclient from '../../Utils';
-import Img from '../../Components/Images/synccare-1.png'
+import Img from '../../Components/Images/synccareNew.png'
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -79,7 +79,7 @@ const Login = () => {
                 setSnackMessage(data.message);
                 setLoading(false);
                 setTimeout(() => {
-                    window.location = "/";
+                    window.location = "/safepak/";
                 }, 1000);
             } else {
                 setLoading(false);
