@@ -59,8 +59,8 @@ const Routing = () => {
         <BrowserRouter>
             <Routes basename="/safepak">
 
-                <Route path="/" element={<Login />} />
-                <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
                 {menuList.map((menu) => {
                     const componentName = menu.component;
