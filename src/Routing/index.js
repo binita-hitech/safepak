@@ -21,7 +21,7 @@ const Routing = () => {
 
     const ProtectedRoute = ({ children }) => {
         return localStorage.getItem("token") ? (
-          <MiniDrawer children={children} />
+          <MiniDrawer children={children} menuList={menuList}/>
         ) : (
           <Navigate to="/login"></Navigate>
         );
@@ -57,7 +57,7 @@ const Routing = () => {
 
     return (
         <BrowserRouter>
-            <Routes basename="/safepak">
+            <Routes>
 
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />

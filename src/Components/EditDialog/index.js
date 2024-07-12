@@ -80,7 +80,7 @@ const EditDialog = (props) => {
         if (!formData.company_name) newErrors.company_name = 'Company Name is required';
         if (!formData.company_erply_id) newErrors.company_erply_id = 'Company ERPLY ID is required';
         if (!formData.company_email) newErrors.company_email = 'Company Email is required';
-        if (formData.company_phone && formData.company_phone.length >= 10) newErrors.company_phone = 'Phone number should be less than 10 digits';
+        if (formData.company_phone && formData.company_phone.length > 10) newErrors.company_phone = 'Phone number should be less than 10 digits';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -157,6 +157,8 @@ const EditDialog = (props) => {
                             name="company_phone"
                             value={formData.company_phone}
                             onChange={handleChange}
+                            error={!!errors.company_phone}
+                            helperText={errors.company_phone}
                             fullWidth
                             margin="normal"
                         />

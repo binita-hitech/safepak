@@ -4,6 +4,7 @@ import { AccountCircle, Https, Menu } from '@mui/icons-material';
 import { styled } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import httpclient from '../../Utils';
+import Img from '../../Components/Images/synccare-1.png'
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -98,7 +99,7 @@ const Login = () => {
                 <Card style={{ boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.5)' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} textAlign="center">
-                            <img src="./synccareNew.png" alt="img"/>
+                            <img src={Img} alt="img"/>
                         </Grid>
                         <Grid item xs={12}>
 

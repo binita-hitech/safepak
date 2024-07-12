@@ -50,6 +50,7 @@ import {
 import MuiAlert from "@mui/material/Alert";
 import httpclient from "../../Utils";
 import useTokenRefresh from "../../Hooks/useTokenRefresh";
+import Img from "../Images/synccare-1.png"
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -207,7 +208,7 @@ const AvatarDiv = styled("div")(({ theme }) => ({
 
 
 
-export default function MiniDrawer({children}) {
+export default function MiniDrawer({children, menuList}) {
 
   const anchorRef = React.useRef(null);
   const [open, setOpen] = React.useState(true);
@@ -219,29 +220,7 @@ export default function MiniDrawer({children}) {
   var loginData = localStorage.getItem("user");
   var loginValue = JSON.parse(loginData);
 
-  const [menuList, setMenuList] = useState([]);
-  const refresh = useTokenRefresh();
-
-  useEffect(() => {
-    getAllMenus();
-  }, []);
-
-
-  const getAllMenus = () => {
-    httpclient
-      .get(`admin-menu-list`)
-      .then(({ data }) => {
-        if (data.status === 200) {
-          setMenuList(data.data);
-        }
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          refresh();
-        }
-      });
-  };
-
+  
   React.useEffect(() => {
     resize();
     window.addEventListener("resize", resize);
@@ -404,7 +383,7 @@ export default function MiniDrawer({children}) {
           <DrawerHeader>
             <Link to="/">
               {/* <h3>Sync Care</h3> */}
-              <img src="/synccare-1.png" alt="synccare_logo" />
+              <img src={Img} alt="synccare_logo" />
               {/*<small>{Global.version}</small> */}
             </Link>
           </DrawerHeader>
@@ -434,7 +413,7 @@ export default function MiniDrawer({children}) {
         >
           <DrawerHeader>
             <Link to="/">
-            <img src="/synccare-1.png" alt="synccare_logo" />
+            <img src={Img} alt="synccare_logo" />
             </Link>
           </DrawerHeader>
           <Divider />
