@@ -57,7 +57,7 @@ const Routing = () => {
 
     return (
         <BrowserRouter>
-            <Routes>
+            <Routes basename="/safepak">
 
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
