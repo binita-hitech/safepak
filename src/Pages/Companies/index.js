@@ -109,7 +109,8 @@ const configRowPerPage = JSON.parse(localStorage.getItem("configRowPerPage"));
 
 
 const Companies = (props) => {
-    const refresh = useTokenRefresh();
+    //const refresh = useTokenRefresh();
+    const { getTokenRefreshed:refresh, open: tokenOpen, message: tokenMessage, messageState: tokenMessageState } = useTokenRefresh();
     const navigate = useNavigate();
     const [openResetDialog, setOpenResetDialog] = useState(false);
     const [viewDetails, setViewDetails] = useState({});
@@ -203,13 +204,26 @@ const Companies = (props) => {
                 setFrom(data.meta.from);
                 setTo(data.meta.to);
                 setLoading(false);
+            } else if (data.status === 400) {
+                const errorMessages = Object.values(data.errors).flat();
+                setOpen(true);
+                setMessage(errorMessages);
+                setMessageState("error");
+                setLoading(false);
+            } else if (data.status === 401) {
+                setOpen(true);
+                setMessage(data.message);
+                setMessageState("error");
+                setLoading(false);
+                refresh();
+            } else {
+                setOpen(true);
+                setMessage(data.message);
+                setMessageState("error");
+                setLoading(false);
             }
         })
-        .catch((err) => {
-            if (err.response.status === 401) {
-                refresh();
-            }
-        });
+            
     };
 
     const hadleFilterOpen = () => {
@@ -255,13 +269,26 @@ const Companies = (props) => {
                         setFrom(data.meta.from);
                         setTo(data.meta.to);
                         setLoading(false);
+                    }else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
+                        refresh();
+                    } else {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
                 })
-                .catch((err) => {
-                    if (err.response.status === 401) {
-                        refresh();
-                    }
-                });
+                
         } else {
             getAllUsers();
         }
@@ -298,10 +325,23 @@ const Companies = (props) => {
                         setFrom(data.meta.from);
                         setTo(data.meta.to);
                         setLoading(false);
-                    }
-                }).catch((err) => {
-                    if (err.response.status === 401) {
+                    }else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                         refresh();
+                    } else {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
                 })
             : httpclient
@@ -312,12 +352,31 @@ const Companies = (props) => {
                 .then(({ data }) => {
                     if (data.status === 200) {
                         setRows(data.data);
-                    }
-                }).catch((err) => {
-                    if (err.response.status === 401) {
+                        setTotal(data.meta.total);
+                        setRowsPerPage(parseInt(data.meta.per_page));
+                        setPage(data.meta.current_page);
+                        setFrom(data.meta.from);
+                        setTo(data.meta.to);
+                        setLoading(false);
+                    }else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                         refresh();
+                    } else {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
-                });
+                })
     };
 
     const handleChangePage = (e, page) => {
@@ -337,12 +396,25 @@ const Companies = (props) => {
                         setFrom(data.meta.from);
                         setTo(data.meta.to);
                         setLoading(false);
+                    }else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
+                        refresh();
+                    } else {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
-                }).catch((err) => {
-                    if (err.response.status === 401) {
-                      refresh();
-                    }
-                  })
+                })
             : httpclient
                 .get(
                     `companies?direction=${direction ? "asc" : "desc"
@@ -357,12 +429,25 @@ const Companies = (props) => {
                         setFrom(data.meta.from);
                         setTo(data.meta.to);
                         setLoading(false);
+                    }else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
+                        refresh();
+                    } else {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
-                }).catch((err) => {
-                    if (err.response.status === 401) {
-                      refresh();
-                    }
-                  });
+                })
     };
 
     const handleChangeRowsPerPage = (event) => {
@@ -387,12 +472,25 @@ const Companies = (props) => {
                         setFrom(data.meta.from);
                         setTo(data.meta.to);
                         setLoading(false);
+                    }else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
+                        refresh();
+                    } else {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
-                }).catch((err) => {
-                    if (err.response.status === 401) {
-                      refresh();
-                    }
-                  })
+                })
             : httpclient
                 .get(
                     `companies?direction=${direction ? "asc" : "desc"}&pagination=${+event
@@ -408,12 +506,25 @@ const Companies = (props) => {
                         setTo(data.meta.to);
                         setPage(data.meta.current_page);
                         setLoading(false);
+                    }else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
+                        refresh();
+                    } else {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
-                }).catch((err) => {
-                    if (err.response.status === 401) {
-                      refresh();
-                    }
-                  });
+                })
     };
 
 
@@ -444,11 +555,25 @@ const Companies = (props) => {
                             setOpenActiveDialog(false);
                             setViewDetails({});
                             getAllUsers();
+                        } else if (data.status === 400) {
+                            const errorMessages = Object.values(data.errors).flat();
+                            setOpen(true);
+                            setMessage(errorMessages);
+                            setMessageState("error");
+                            setLoading(false);
+                        } else if (data.status === 401) {
+                            setOpen(true);
+                            setMessage(data.message);
+                            setMessageState("error");
+                            setLoading(false);
+                            refresh();
                         } else {
                             setOpen(true);
-                            setMessageState("error");
                             setMessage(data.message);
+                            setMessageState("error");
+                            setLoading(false);
                         }
+                   
                     })
             ) :
                 httpclient
@@ -461,78 +586,91 @@ const Companies = (props) => {
                             setOpenActiveDialog(false);
                             setViewDetails({});
                             getAllUsers();
+                        } else if (data.status === 400) {
+                            const errorMessages = Object.values(data.errors).flat();
+                            setOpen(true);
+                            setMessage(errorMessages);
+                            setMessageState("error");
+                            setLoading(false);
+                        } else if (data.status === 401) {
+                            setOpen(true);
+                            setMessage(data.message);
+                            setMessageState("error");
+                            setLoading(false);
+                            refresh();
                         } else {
                             setOpen(true);
-                            setMessageState("error");
                             setMessage(data.message);
+                            setMessageState("error");
+                            setLoading(false);
                         }
                     })
         }
     };
 
 
-    const handleDeactivate = (row) => {
-        setOpenActiveDialog(true);
-        setViewDetails(row);
-    };
+    // const handleDeactivate = (row) => {
+    //     setOpenActiveDialog(true);
+    //     setViewDetails(row);
+    // };
 
-    const sendDeactivate = (call) => {
-        if (call.open === false) {
-            setOpenActiveDialog(false);
-            setViewDetails({});
-        }
-        if (call.success === true) {
-            httpclient
-                .get(`user/activate-deactivate/${viewDetails.userID}`)
-                .then(({ data }) => {
-                    if (data.status === 200) {
-                        setOpen(true);
-                        setMessageState("success");
-                        setMessage(data.message);
-                        setOpenActiveDialog(false);
-                        setViewDetails({});
-                        getAllUsers();
-                    } else {
-                        setOpen(true);
-                        setMessageState("error");
-                        setMessage(data.message);
-                    }
-                });
-        }
-    };
+    // const sendDeactivate = (call) => {
+    //     if (call.open === false) {
+    //         setOpenActiveDialog(false);
+    //         setViewDetails({});
+    //     }
+    //     if (call.success === true) {
+    //         httpclient
+    //             .get(`user/activate-deactivate/${viewDetails.userID}`)
+    //             .then(({ data }) => {
+    //                 if (data.status === 200) {
+    //                     setOpen(true);
+    //                     setMessageState("success");
+    //                     setMessage(data.message);
+    //                     setOpenActiveDialog(false);
+    //                     setViewDetails({});
+    //                     getAllUsers();
+    //                 } else {
+    //                     setOpen(true);
+    //                     setMessageState("error");
+    //                     setMessage(data.message);
+    //                 }
+    //             });
+    //     }
+    // };
 
-    const handleResetPassword = (row) => {
-        setOpenResetDialog(true);
-        setViewDetails(row);
-    };
+    // const handleResetPassword = (row) => {
+    //     setOpenResetDialog(true);
+    //     setViewDetails(row);
+    // };
 
-    const sendReset = (call) => {
-        if (call.open === false) {
-            setOpenResetDialog(false);
-            setViewDetails({});
-        }
-        if (call.success === true) {
-            httpclient
-                .post(`user/reset-password/${viewDetails.userID}`, {
-                    password: call.password,
-                    password_confirmation: call.confirmPassword
-                })
-                .then(({ data }) => {
-                    if (data.status === 200) {
-                        setOpen(true);
-                        setMessageState("success");
-                        setMessage(data.message);
-                        setOpenActiveDialog(false);
-                        setViewDetails({});
-                        getAllUsers();
-                    } else {
-                        setOpen(true);
-                        setMessageState("error");
-                        setMessage(data.message);
-                    }
-                });
-        }
-    };
+    // const sendReset = (call) => {
+    //     if (call.open === false) {
+    //         setOpenResetDialog(false);
+    //         setViewDetails({});
+    //     }
+    //     if (call.success === true) {
+    //         httpclient
+    //             .post(`user/reset-password/${viewDetails.userID}`, {
+    //                 password: call.password,
+    //                 password_confirmation: call.confirmPassword
+    //             })
+    //             .then(({ data }) => {
+    //                 if (data.status === 200) {
+    //                     setOpen(true);
+    //                     setMessageState("success");
+    //                     setMessage(data.message);
+    //                     setOpenActiveDialog(false);
+    //                     setViewDetails({});
+    //                     getAllUsers();
+    //                 } else {
+    //                     setOpen(true);
+    //                     setMessageState("error");
+    //                     setMessage(data.message);
+    //                 }
+    //             });
+    //     }
+    // };
 
     const handleDelete = (row) => {
         setOpenDeleteDialog(true);
@@ -555,10 +693,23 @@ const Companies = (props) => {
                         setOpenDeleteDialog(false);
                         setViewDetails({});
                         getAllUsers();
+                    } else if (data.status === 400) {
+                        const errorMessages = Object.values(data.errors).flat();
+                        setOpen(true);
+                        setMessage(errorMessages);
+                        setMessageState("error");
+                        setLoading(false);
+                    } else if (data.status === 401) {
+                        setOpen(true);
+                        setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
+                        refresh();
                     } else {
                         setOpen(true);
-                        setMessageState("error");
                         setMessage(data.message);
+                        setMessageState("error");
+                        setLoading(false);
                     }
                 });
         }
@@ -769,15 +920,15 @@ const Companies = (props) => {
             <Snackbar
                 autoHideDuration={3000}
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                open={open}
+                open={open || tokenOpen}
                 onClose={handleClose}
             >
                 <Alert
                     onClose={handleClose}
-                    severity={messageState}
+                    severity={messageState || tokenMessageState}
                     sx={{ width: "100%" }}
                 >
-                    {message}
+                    {message || tokenMessage}
                 </Alert>
             </Snackbar>
         </div>

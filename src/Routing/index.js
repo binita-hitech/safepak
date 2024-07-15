@@ -16,7 +16,7 @@ import Error404 from '../Components/Error404';
 
 
 const Routing = () => {
-    const refresh = useTokenRefresh();
+    const { getTokenRefreshed:refresh} = useTokenRefresh();
     const [menuList, setMenuList] = useState([]);
 
     const ProtectedRoute = ({ children }) => {

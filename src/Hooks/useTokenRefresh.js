@@ -7,6 +7,9 @@ const useTokenRefresh = () => {
 
     var loginToken = localStorage.getItem("token");
     var loginTok = JSON.parse(loginToken);
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState("");
+    const [messageState, setMessageState] = useState("");
 
     const getTokenRefreshed = () => {
         let formData = new FormData();
@@ -21,6 +24,17 @@ const useTokenRefresh = () => {
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
+                }else if (data.status === 400) {
+                    const errorMessages = Object.values(data.errors).flat();
+                    setOpen(true);
+                    setMessage(errorMessages);
+                    setMessageState("error");
+                   
+                } else {
+                    setOpen(true);
+                    setMessage(data.message);
+                    setMessageState("error");
+                   
                 }
             })
             .catch(error => {
@@ -28,7 +42,8 @@ const useTokenRefresh = () => {
             });
     };
 
-    return getTokenRefreshed;
+    return {getTokenRefreshed, open, message, messageState};
 };
+
 
 export default useTokenRefresh;

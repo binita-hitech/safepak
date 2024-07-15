@@ -81,12 +81,23 @@ const Login = () => {
                 setTimeout(() => {
                     window.location = "/safepak/";
                 }, 1000);
-            } else {
-                setLoading(false);
+            } else if (data.status === 400) {
+                const errorMessages = Object.values(data.errors).flat();
                 setOpen(true);
+                setSnackMessage(errorMessages);
                 setSnackStatus("error");
-                setSnackMessage(data.message || data.error);
-
+                setLoading(false);
+            } else if (data.status === 401) {
+                setOpen(true);
+                setSnackMessage(data.message);
+                setSnackStatus("error");
+                setLoading(false);
+                //refresh();
+            } else {
+                setOpen(true);
+                setSnackMessage(data.message);
+                setSnackStatus("error");
+                setLoading(false);
             }
         })
     }
