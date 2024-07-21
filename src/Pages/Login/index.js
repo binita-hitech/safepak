@@ -32,8 +32,8 @@ const GridBlockTitle = styled("div")(({ theme }) => ({
 const Login = () => {
 
     const [open, setOpen] = useState(false);
-    const [snackStatus, setSnackStatus] = useState("");
-    const [snackMessage, setSnackMessage] = useState("");
+    const [message, setMessage] = useState("");
+    const [messageState, setMessageState] = useState("");
     const [loading, setLoading] = useState(false);
     const [loginData, setLoginData] = useState({
    
@@ -75,28 +75,37 @@ const Login = () => {
                 localStorage.setItem("user", JSON.stringify(data.data.user));
                 localStorage.setItem("token", JSON.stringify(data.data.access_token));
                 setOpen(true);
-                setSnackStatus("success");
-                setSnackMessage(data.message);
+                setMessageState("success");
+                setMessage(data.message);
                 setLoading(false);
                 setTimeout(() => {
                     window.location = "/safepak/";
                 }, 1000);
-            } else if (data.status === 400) {
-                const errorMessages = Object.values(data.errors).flat();
-                setOpen(true);
-                setSnackMessage(errorMessages);
-                setSnackStatus("error");
-                setLoading(false);
-            } else if (data.status === 401) {
-                setOpen(true);
-                setSnackMessage(data.message);
-                setSnackStatus("error");
-                setLoading(false);
-                //refresh();
             } else {
                 setOpen(true);
-                setSnackMessage(data.message);
-                setSnackStatus("error");
+                setMessage(data.message);
+                setMessageState("error");
+                setLoading(false);
+            }
+
+        }).catch((err) => {
+           if (err.response.status === 422) {
+                const errorMessages = Object.values(err.response.data.errors).flat();
+                setOpen(true);
+                setMessage(errorMessages);
+                setMessageState("error");
+                setLoading(false);
+            } else if (err.response.status === 400) {
+                const errorMessages = Object.values(err.response.data.errors).flat();
+                setOpen(true);
+                setMessage(errorMessages);
+                setMessageState("error");
+                setLoading(false);
+
+            } else {
+                setOpen(true);
+                setMessage(err.response.message);
+                setMessageState("error");
                 setLoading(false);
             }
         })
@@ -116,7 +125,7 @@ const Login = () => {
 
                             <FormGroup>
                                 <GridBlockContent>
-                                    {/* <GridBlockTitle>Login</GridBlockTitle> */}
+                            
                                     <Box pt={2} pb={1}>
                                         
                                         <Box p={2} pb={2} sx={{ display: 'flex', alignItems: 'flex-end' }}>
@@ -182,10 +191,10 @@ const Login = () => {
             >
                 <Alert
                     onClose={handleClose}
-                    severity={snackStatus}
+                    severity={messageState}
                     sx={{ width: "100%" }}
                 >
-                    {snackMessage}
+                    {message}
                 </Alert>
             </Snackbar>
         </div >

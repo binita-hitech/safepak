@@ -24,25 +24,37 @@ const useTokenRefresh = () => {
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
-                }else if (data.status === 400) {
-                    const errorMessages = Object.values(data.errors).flat();
-                    setOpen(true);
-                    setMessage(errorMessages);
-                    setMessageState("error");
-                   
-                } else {
+                }else {
                     setOpen(true);
                     setMessage(data.message);
                     setMessageState("error");
-                   
+                  
+                }
+
+            }).catch((err) => {
+                if (err.response.status === 422) {
+                    const errorMessages = Object.values(err.response.data.errors).flat();
+                    setOpen(true);
+                    setMessage(errorMessages[0]);
+                    setMessageState("error");
+             
+                } else if (err.response.status === 400) {
+                    const errorMessages = Object.values(err.response.data.errors).flat();
+                    setOpen(true);
+                    setMessage(errorMessages[0]);
+                    setMessageState("error");
+              
+
+                } else {
+                    setOpen(true);
+                    setMessage(err.response.message);
+                    setMessageState("error");
+                    
                 }
             })
-            .catch(error => {
-                console.error("Token refresh error:", error);
-            });
     };
 
-    return {getTokenRefreshed, open, message, messageState};
+    return {getTokenRefreshed, open, message, messageState, setOpen};
 };
 
 
