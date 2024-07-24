@@ -47,7 +47,7 @@ const useTokenRefresh = () => {
 
                 } else {
                     setOpen(true);
-                    setMessage(err.response.message);
+                    setMessage(err.response.data.message);
                     setMessageState("error");
                     
                 }

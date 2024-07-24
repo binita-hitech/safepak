@@ -22,6 +22,7 @@ import TableComponent from "../../Components/TableComponent";
 import EditDialog from "../../Components/EditDialog";
 import DeleteDialog from "../../Components/DeleteDialog";
 import useTokenRefresh from "../../Hooks/useTokenRefresh";
+import EditDialogUser from "../../Components/EditDialogUser";
 // import DeactivateDialog from "../DeactivateDialog";
 // import ResetDialog from "../ResetDialog";
 // import DeleteDialog from "../DeleteDialog";
@@ -34,21 +35,21 @@ const login = localStorage.getItem("login");
 const loginData = JSON.parse(login);
 
 const columns = [
-    { id: "sn", name: "SN" },
-    { id: "company_erply_id", name: "Company ID" },
-    { id: "company_name", name: "Company Name" },
-    { id: "company_email", name: "Email" },
-    { id: "company_address", name: "Address" },
-    { id: "company_phone", name: "Phone" },
-    { id: "company_status", name: "Status" },
+    { id: "id", name: "SN" },
+    // { id: "company_erply_id", name: "Company ID" },
+    { id: "full_name", name: "Full Name" },
+    { id: "email", name: "Email" },
+    { id: "mobile", name: "Mobile" },
+    { id: "role", name: "Role" },
+    { id: "is_system_admin", name: "System Admin?" },
     { id: "actions", name: "Actions" },
 ];
 
 const adminColumns = [
     { id: "userID", name: "ID" },
     { id: "company_erply_id", name: "First Name" },
-    { id: "company_name", name: "Last Name" },
-    { id: "company_status", name: "User Name" },
+    { id: "full_name", name: "Last Name" },
+    { id: "mobile", name: "User Name" },
     { id: "UserLevel", name: "User Level" },
     { id: "userActive", name: "Active" },
 ]
@@ -108,7 +109,7 @@ const configRowPerPage = JSON.parse(localStorage.getItem("configRowPerPage"));
 
 
 
-const Companies = (props) => {
+const Users = (props) => {
 
     const { getTokenRefreshed: refresh, open: tokenOpen, setOpen: setTokenOpen, message: tokenMessage, messageState: tokenMessageState } = useTokenRefresh();
 
@@ -145,15 +146,15 @@ const Companies = (props) => {
 
     const [filterData, setFilterData] = useState({
         company_erply_id: "",
-        company_name: "",
-        company_status: "",
+        full_name: "",
+        mobile: "",
         remove: false,
     });
 
     const [submittedData, setSubmittedData] = useState({
         company_erply_id: "",
-        company_name: "",
-        company_status: "",
+        full_name: "",
+        mobile: "",
         submit: false,
     });
 
@@ -164,8 +165,8 @@ const Companies = (props) => {
     useEffect(() => {
         if (
             filterData.company_erply_id === "" &&
-            filterData.company_name === "" &&
-            filterData.company_status === ""
+            filterData.full_name === "" &&
+            filterData.mobile === ""
         ) {
             setSubmittedData({
                 ...submittedData,
@@ -173,21 +174,21 @@ const Companies = (props) => {
             });
         }
         if (filterData.company_erply_id === " ") filterData.company_erply_id = "";
-        if (filterData.company_name === " ") filterData.company_name = "";
-        if (filterData.company_status === " ") filterData.company_status = "";
+        if (filterData.full_name === " ") filterData.full_name = "";
+        if (filterData.mobile === " ") filterData.mobile = "";
 
         filterData.remove === true && handleFilter();
     }, [filterData]);
 
     useEffect(() => {
-        let userStorage = JSON.parse(localStorage.getItem("company_filter"));
+        let userStorage = JSON.parse(localStorage.getItem("user_filter"));
         userStorage !== null && setFilterData(userStorage);
 
         userStorage == null
             ? getAllUsers()
             : userStorage.company_erply_id == "" &&
-                userStorage.company_name == "" &&
-                userStorage.company_status == "" &&
+                userStorage.full_name == "" &&
+                userStorage.mobile == "" &&
 
                 userStorage.removed == false
                 ? getAllUsers()
@@ -196,7 +197,7 @@ const Companies = (props) => {
 
     const getAllUsers = () => {
         setLoading(true);
-        httpclient.get(`companies?pagination=${rowsPerPage}`).then(({ data }) => {
+        httpclient.get(`admin-users?pagination=${rowsPerPage}`).then(({ data }) => {
             if (data.status === 200) {
                 setRows(data.data);
                 setTotal(data.meta.total);
@@ -258,22 +259,22 @@ const Companies = (props) => {
         setSubmittedData({
             ...submittedData,
             company_erply_id: filterData.company_erply_id,
-            company_name: filterData.company_name,
-            company_status: filterData.company_status,
+            full_name: filterData.full_name,
+            mobile: filterData.mobile,
 
             submit: true,
         });
         filterData.remove = true;
-        localStorage.setItem("company_filter", JSON.stringify(filterData));
+        localStorage.setItem("user_filter", JSON.stringify(filterData));
         setLoading(true);
         if (
             filterData.company_erply_id ||
-            filterData.company_name ||
-            filterData.company_status
+            filterData.full_name ||
+            filterData.mobile
         ) {
             httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&pagination=${rowsPerPage}&page=${1}`
+                    `admin-users?filters[full_name][$contains]=${filterData.full_name}&filters[mobile][$eq]=${filterData.mobile}&pagination=${rowsPerPage}&page=${1}`
                 )
                 .then(({ data }) => {
                     if (data.status === 200) {
@@ -342,7 +343,7 @@ const Companies = (props) => {
         submittedData.submit
             ? httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&sort[0]=${column}:${!direction ? "asc" : "desc"
+                    `admin-users?filters[full_name][$contains]=${filterData.full_name}&filters[mobile][$eq]=${filterData.mobile}&sort[0]=${column}:${!direction ? "asc" : "desc"
                     }&pagination=${rowsPerPage}&page=${page}`
                 )
                 .then(({ data }) => {
@@ -389,7 +390,7 @@ const Companies = (props) => {
                 })
             : httpclient
                 .get(
-                    `companies?sort[0]=${column}:${!direction ? "asc" : "desc"
+                    `admin-users?sort[0]=${column}:${!direction ? "asc" : "desc"
                     }&pagination=${rowsPerPage}`
                 )
                 .then(({ data }) => {
@@ -441,7 +442,7 @@ const Companies = (props) => {
         submittedData.submit
             ? httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&sort[0]=${currentColumn}:${!direction ? "asc" : "desc"
+                    `admin-users?filters[full_name][$contains]=${filterData.full_name}&filters[mobile][$eq]=${filterData.mobile}&sort[0]=${currentColumn}:${!direction ? "asc" : "desc"
                     }&pagination=${rowsPerPage}&page=${page}`
                 )
                 .then(({ data }) => {
@@ -488,7 +489,7 @@ const Companies = (props) => {
                 })
             : httpclient
                 .get(
-                    `companies?pagination=${rowsPerPage}&page=${page}`
+                    `admin-users?pagination=${rowsPerPage}&page=${page}`
                 )
                 .then(({ data }) => {
                     if (data.status === 200) {
@@ -543,7 +544,7 @@ const Companies = (props) => {
         submittedData.submit
             ? httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&sort[0]=${currentColumn}:${!direction ? "asc" : "desc"
+                    `admin-users?filters[full_name][$contains]=${filterData.full_name}&filters[mobile][$eq]=${filterData.mobile}&sort[0]=${currentColumn}:${!direction ? "asc" : "desc"
                     }&pagination=${+event.target.value}&page=${page}`
                 )
                 .then(({ data }) => {
@@ -591,7 +592,7 @@ const Companies = (props) => {
                 })
             : httpclient
                 .get(
-                    `companies?pagination=${+event
+                    `admin-users?pagination=${+event
                         .target.value}&page=${1}`
                 )
                 .then(({ data }) => {
@@ -658,7 +659,7 @@ const Companies = (props) => {
         if (call.success === true) {
             viewDetails.id ? (
                 httpclient
-                    .put(`companies/${viewDetails.id}`, formData)
+                    .put(`admin-users/${viewDetails.id}`, formData)
                     .then(({ data }) => {
                         if (data.status === 200) {
                             setOpen(true);
@@ -703,7 +704,7 @@ const Companies = (props) => {
                     })
             ) :
                 httpclient
-                    .post(`companies`, formData)
+                    .post(`admin-users`, formData)
                     .then(({ data }) => {
                         if (data.status === 200) {
                             setOpen(true);
@@ -762,7 +763,7 @@ const Companies = (props) => {
         }
         if (call.success === true) {
             httpclient
-                .delete(`companies/${viewDetails.id}`, formData)
+                .delete(`admin-users/${viewDetails.id}`, formData)
                 .then(({ data }) => {
                     if (data.status === 200) {
                         setOpen(true);
@@ -831,7 +832,7 @@ const Companies = (props) => {
             <Grid container spacing={2}>
                 <Grid item md={8} xs={12}>
                     <Header>
-                        <h1>List Companies</h1>
+                        <h1>List Users</h1>
                     </Header>
                 </Grid>
                 <Grid
@@ -852,7 +853,7 @@ const Companies = (props) => {
                             variant="contained"
                             onClick={handleAddNew}
                         >
-                            <Add style={{ marginRight: "5px" }} fontSize="small" /> Add Company
+                            <Add style={{ marginRight: "5px" }} fontSize="small" /> Add User
                         </AddButton>
                     }
                 </Grid>
@@ -863,34 +864,24 @@ const Companies = (props) => {
                         <Card>
                             <Box p={4}>
                                 <Grid container spacing={2}>
+
                                     <Grid item xs={12} md={4}>
-                                        <InputLabel>Company Erply ID</InputLabel>
+                                        <InputLabel>Full Name</InputLabel>
                                         <TextField
                                             variant="outlined"
-                                            name="company_erply_id"
-                                            value={filterData.company_erply_id}
+                                            name="full_name"
+                                            value={filterData.full_name}
                                             onChange={handleChangeFilter}
                                             onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
                                             fullWidth
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={4}>
-                                        <InputLabel>Company Name</InputLabel>
+                                        <InputLabel>Mobile</InputLabel>
                                         <TextField
                                             variant="outlined"
-                                            name="company_name"
-                                            value={filterData.company_name}
-                                            onChange={handleChangeFilter}
-                                            onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
-                                            fullWidth
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} md={4}>
-                                        <InputLabel>Status</InputLabel>
-                                        <TextField
-                                            variant="outlined"
-                                            name="company_status"
-                                            value={filterData.company_status}
+                                            name="mobile"
+                                            value={filterData.mobile}
                                             onChange={handleChangeFilter}
                                             onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
                                             fullWidth
@@ -920,50 +911,42 @@ const Companies = (props) => {
                     </Collapse>
                 </Grid>
 
-                {submittedData.company_erply_id ||
-                    submittedData.company_name ||
-                    submittedData.company_status ? (
-                    <Grid item xs={12}>
-                        <FilteredBox>
-                            <span>Filtered: </span>
-                            {submittedData.company_erply_id && (
-                                <p>
-                                    <span>Company Erply ID: {submittedData.company_erply_id}</span>
-                                    <Close
-                                        fontSize="small"
-                                        onClick={() => handleRemove("company_erply_id")}
-                                    />
-                                </p>
-                            )}
-                            {submittedData.company_name && (
-                                <p>
-                                    <span>Company Name: {submittedData.company_name}</span>
-                                    <Close
-                                        fontSize="small"
-                                        onClick={() => handleRemove("company_name")}
-                                    />
-                                </p>
-                            )}
-                            {submittedData.company_status && (
-                                <p>
-                                    <span>Status: {submittedData.company_status}</span>
-                                    <Close
-                                        fontSize="small"
-                                        onClick={() => handleRemove("company_status")}
-                                    />
-                                </p>
-                            )}
+                {
+                    submittedData.full_name ||
+                        submittedData.mobile ? (
+                        <Grid item xs={12}>
+                            <FilteredBox>
+                                <span>Filtered: </span>
 
-                        </FilteredBox>
-                    </Grid>
-                ) : (
-                    <Box></Box>
-                )}
+                                {submittedData.full_name && (
+                                    <p>
+                                        <span>Company Name: {submittedData.full_name}</span>
+                                        <Close
+                                            fontSize="small"
+                                            onClick={() => handleRemove("full_name")}
+                                        />
+                                    </p>
+                                )}
+                                {submittedData.mobile && (
+                                    <p>
+                                        <span>Status: {submittedData.mobile}</span>
+                                        <Close
+                                            fontSize="small"
+                                            onClick={() => handleRemove("mobile")}
+                                        />
+                                    </p>
+                                )}
+
+                            </FilteredBox>
+                        </Grid>
+                    ) : (
+                        <Box></Box>
+                    )}
                 {/* Filter */}
 
                 <Grid item xs={12}>
                     <TableComponent
-                        name={"Company"}
+                        name={"User"}
                         columns={columns}
                         rows={rows}
                         sort={true}
@@ -987,10 +970,10 @@ const Companies = (props) => {
 
 
 
-            {openDeleteDialog && <DeleteDialog name={"Company"} viewDetails={viewDetails} sendDelete={sendDelete} />}
+            {openDeleteDialog && <DeleteDialog name={"User"} viewDetails={viewDetails} sendDelete={sendDelete} />}
 
             {openEditDialog && (
-                <EditDialog
+                <EditDialogUser
                     viewDetails={viewDetails}
                     sendEdit={sendEdit}
                 />
@@ -1014,4 +997,4 @@ const Companies = (props) => {
     );
 };
 
-export default Companies;
+export default Users;

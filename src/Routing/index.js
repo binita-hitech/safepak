@@ -8,6 +8,7 @@ import Home from '../Pages/Home';
 // import Orders from '../Pages/Orders';
 // import Roles from '../Pages/Roles';
 import Companies from '../Pages/Companies';
+import Users from '../Pages/Users';
 import NotFound from '../Pages/NotFound';
 import MiniDrawer from '../Components/Drawer';
 import useTokenRefresh from '../Hooks/useTokenRefresh';
@@ -17,6 +18,8 @@ import {
     Box,  
     Snackbar,
 } from "@mui/material";
+import Roles from '../Pages/Roles';
+import Consumers from '../Pages/Consumers';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -47,8 +50,9 @@ const Routing = () => {
 
     const componentMapping = {
 
-        // Orders: Orders,
-        // Roles: Roles,
+        Consumers: Consumers,
+        Roles: Roles,
+        Users: Users,
         Companies: Companies,
 
     };
@@ -91,7 +95,7 @@ const Routing = () => {
 
                 } else {
                     setOpen(true);
-                    setMessage(err.response.message);
+                    setMessage(err.response.data.message);
                     setMessageState("error");
                   
                 }

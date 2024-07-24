@@ -22,6 +22,7 @@ import TableComponent from "../../Components/TableComponent";
 import EditDialog from "../../Components/EditDialog";
 import DeleteDialog from "../../Components/DeleteDialog";
 import useTokenRefresh from "../../Hooks/useTokenRefresh";
+import EditDialogConsumer from "../../Components/EditDialogConsumer";
 // import DeactivateDialog from "../DeactivateDialog";
 // import ResetDialog from "../ResetDialog";
 // import DeleteDialog from "../DeleteDialog";
@@ -35,20 +36,17 @@ const loginData = JSON.parse(login);
 
 const columns = [
     { id: "sn", name: "SN" },
-    { id: "company_erply_id", name: "Company ID" },
-    { id: "company_name", name: "Company Name" },
-    { id: "company_email", name: "Email" },
-    { id: "company_address", name: "Address" },
-    { id: "company_phone", name: "Phone" },
-    { id: "company_status", name: "Status" },
+    { id: "company_id", name: "Company ID" },
+    { id: "consumer_name", name: "Consumer Name" },
+    { id: "consumer_active", name: "Consumer Active?" },
     { id: "actions", name: "Actions" },
 ];
 
 const adminColumns = [
     { id: "userID", name: "ID" },
-    { id: "company_erply_id", name: "First Name" },
-    { id: "company_name", name: "Last Name" },
-    { id: "company_status", name: "User Name" },
+    { id: "company_id", name: "First Name" },
+    { id: "consumer_name", name: "Last Name" },
+    { id: "consumer_active", name: "User Name" },
     { id: "UserLevel", name: "User Level" },
     { id: "userActive", name: "Active" },
 ]
@@ -108,7 +106,7 @@ const configRowPerPage = JSON.parse(localStorage.getItem("configRowPerPage"));
 
 
 
-const Companies = (props) => {
+const Consumers = (props) => {
 
     const { getTokenRefreshed: refresh, open: tokenOpen, setOpen: setTokenOpen, message: tokenMessage, messageState: tokenMessageState } = useTokenRefresh();
 
@@ -144,16 +142,16 @@ const Companies = (props) => {
     const [filterOpen, setFilterOpen] = useState(false);
 
     const [filterData, setFilterData] = useState({
-        company_erply_id: "",
-        company_name: "",
-        company_status: "",
+        company_id: "",
+        consumer_name: "",
+        consumer_active: "",
         remove: false,
     });
 
     const [submittedData, setSubmittedData] = useState({
-        company_erply_id: "",
-        company_name: "",
-        company_status: "",
+        company_id: "",
+        consumer_name: "",
+        consumer_active: "",
         submit: false,
     });
 
@@ -163,31 +161,31 @@ const Companies = (props) => {
 
     useEffect(() => {
         if (
-            filterData.company_erply_id === "" &&
-            filterData.company_name === "" &&
-            filterData.company_status === ""
+            filterData.company_id === "" &&
+            filterData.consumer_name === "" &&
+            filterData.consumer_active === ""
         ) {
             setSubmittedData({
                 ...submittedData,
                 submit: false,
             });
         }
-        if (filterData.company_erply_id === " ") filterData.company_erply_id = "";
-        if (filterData.company_name === " ") filterData.company_name = "";
-        if (filterData.company_status === " ") filterData.company_status = "";
+        if (filterData.company_id === " ") filterData.company_id = "";
+        if (filterData.consumer_name === " ") filterData.consumer_name = "";
+        if (filterData.consumer_active === " ") filterData.consumer_active = "";
 
         filterData.remove === true && handleFilter();
     }, [filterData]);
 
     useEffect(() => {
-        let userStorage = JSON.parse(localStorage.getItem("company_filter"));
+        let userStorage = JSON.parse(localStorage.getItem("consumer_filter"));
         userStorage !== null && setFilterData(userStorage);
 
         userStorage == null
             ? getAllUsers()
-            : userStorage.company_erply_id == "" &&
-                userStorage.company_name == "" &&
-                userStorage.company_status == "" &&
+            : userStorage.company_id == "" &&
+                userStorage.consumer_name == "" &&
+                userStorage.consumer_active == "" &&
 
                 userStorage.removed == false
                 ? getAllUsers()
@@ -196,8 +194,8 @@ const Companies = (props) => {
 
     const getAllUsers = () => {
         setLoading(true);
-        httpclient.get(`companies?pagination=${rowsPerPage}`).then(({ data }) => {
-            if (data.status === 200) {
+        httpclient.get(`consumers?pagination=${rowsPerPage}`).then(({ data }) => {
+            if (data.status === 200 || data.success) {
                 setRows(data.data);
                 setTotal(data.meta.total);
                 setRowsPerPage(parseInt(data.meta.per_page));
@@ -257,9 +255,9 @@ const Companies = (props) => {
     const handleFilter = () => {
         setSubmittedData({
             ...submittedData,
-            company_erply_id: filterData.company_erply_id,
-            company_name: filterData.company_name,
-            company_status: filterData.company_status,
+            company_id: filterData.company_id,
+            consumer_name: filterData.consumer_name,
+            consumer_active: filterData.consumer_active,
 
             submit: true,
         });
@@ -267,16 +265,16 @@ const Companies = (props) => {
         localStorage.setItem("company_filter", JSON.stringify(filterData));
         setLoading(true);
         if (
-            filterData.company_erply_id ||
-            filterData.company_name ||
-            filterData.company_status
+            filterData.company_id ||
+            filterData.consumer_name ||
+            filterData.consumer_active
         ) {
             httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&pagination=${rowsPerPage}&page=${1}`
+                    `consumers?filters[company_id][$eq]=${filterData.company_id}&filters[consumer_name][$contains]=${filterData.consumer_name}&filters[consumer_active][$eq]=${filterData.consumer_active}&pagination=${rowsPerPage}&page=${1}`
                 )
                 .then(({ data }) => {
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setRows(data.data);
                         setTotal(data.meta.total);
                         setRowsPerPage(data.meta.per_page);
@@ -342,11 +340,11 @@ const Companies = (props) => {
         submittedData.submit
             ? httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&sort[0]=${column}:${!direction ? "asc" : "desc"
+                    `consumers?filters[company_id][$eq]=${filterData.company_id}&filters[consumer_name][$contains]=${filterData.consumer_name}&filters[consumer_active][$eq]=${filterData.consumer_active}&sort[0]=${column === "consumer_name" ? "name" : column}:${!direction ? "asc" : "desc"
                     }&pagination=${rowsPerPage}&page=${page}`
                 )
                 .then(({ data }) => {
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setRows(data.data);
                         setTotal(data.meta.total);
                         setRowsPerPage(parseInt(data.meta.per_page));
@@ -389,11 +387,11 @@ const Companies = (props) => {
                 })
             : httpclient
                 .get(
-                    `companies?sort[0]=${column}:${!direction ? "asc" : "desc"
+                    `consumers?sort[0]=${column === "consumer_name" ? "name" : column}:${!direction ? "asc" : "desc"
                     }&pagination=${rowsPerPage}`
                 )
                 .then(({ data }) => {
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setRows(data.data);
                         setTotal(data.meta.total);
                         setRowsPerPage(parseInt(data.meta.per_page));
@@ -441,11 +439,11 @@ const Companies = (props) => {
         submittedData.submit
             ? httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&sort[0]=${currentColumn}:${!direction ? "asc" : "desc"
+                    `consumers?filters[company_id][$eq]=${filterData.company_id}&filters[consumer_name][$contains]=${filterData.consumer_name}&filters[consumer_active][$eq]=${filterData.consumer_active}&sort[0]=${currentColumn === "consumer_name" ? "name" : currentColumn}:${!direction ? "asc" : "desc"
                     }&pagination=${rowsPerPage}&page=${page}`
                 )
                 .then(({ data }) => {
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setRows(data.data);
                         setTotal(data.meta.total);
                         setRowsPerPage(parseInt(data.meta.per_page));
@@ -488,10 +486,10 @@ const Companies = (props) => {
                 })
             : httpclient
                 .get(
-                    `companies?pagination=${rowsPerPage}&page=${page}`
+                    `consumers?pagination=${rowsPerPage}&page=${page}`
                 )
                 .then(({ data }) => {
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setRows(data.data);
                         setTotal(data.meta.total);
                         setRowsPerPage(parseInt(data.meta.per_page));
@@ -543,12 +541,12 @@ const Companies = (props) => {
         submittedData.submit
             ? httpclient
                 .get(
-                    `companies?filters[company_erply_id][$eq]=${filterData.company_erply_id}&filters[company_name][$contains]=${filterData.company_name}&filters[company_status][$eq]=${filterData.company_status}&sort[0]=${currentColumn}:${!direction ? "asc" : "desc"
+                    `consumers?filters[company_id][$eq]=${filterData.company_id}&filters[consumer_name][$contains]=${filterData.consumer_name}&filters[consumer_active][$eq]=${filterData.consumer_active}&sort[0]=${currentColumn === "consumer_name" ? "name" : currentColumn}:${!direction ? "asc" : "desc"
                     }&pagination=${+event.target.value}&page=${page}`
                 )
                 .then(({ data }) => {
                     setLoading(true);
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setRows(data.data);
                         setTotal(data.meta.total);
                         setRowsPerPage(parseInt(data.meta.per_page));
@@ -591,12 +589,12 @@ const Companies = (props) => {
                 })
             : httpclient
                 .get(
-                    `companies?pagination=${+event
+                    `consumers?pagination=${+event
                         .target.value}&page=${1}`
                 )
                 .then(({ data }) => {
                     setLoading(true);
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setRows(data.data);
                         setTotal(data.meta.total);
                         setRowsPerPage(parseInt(data.meta.per_page));
@@ -658,9 +656,9 @@ const Companies = (props) => {
         if (call.success === true) {
             viewDetails.id ? (
                 httpclient
-                    .put(`companies/${viewDetails.id}`, formData)
+                    .put(`consumers/${viewDetails.id}`, formData)
                     .then(({ data }) => {
-                        if (data.status === 200) {
+                        if (data.status === 200 || data.success) {
                             setOpen(true);
                             setMessageState("success");
                             setMessage(data.message);
@@ -703,9 +701,9 @@ const Companies = (props) => {
                     })
             ) :
                 httpclient
-                    .post(`companies`, formData)
+                    .post(`consumers`, formData)
                     .then(({ data }) => {
-                        if (data.status === 200) {
+                        if (data.status === 200 || data.success) {
                             setOpen(true);
                             setMessageState("success");
                             setMessage(data.message);
@@ -762,9 +760,9 @@ const Companies = (props) => {
         }
         if (call.success === true) {
             httpclient
-                .delete(`companies/${viewDetails.id}`, formData)
+                .delete(`consumers/${viewDetails.id}`, formData)
                 .then(({ data }) => {
-                    if (data.status === 200) {
+                    if (data.status === 200 || data.success) {
                         setOpen(true);
                         setMessageState("success");
                         setMessage(data.message);
@@ -831,7 +829,7 @@ const Companies = (props) => {
             <Grid container spacing={2}>
                 <Grid item md={8} xs={12}>
                     <Header>
-                        <h1>List Companies</h1>
+                        <h1>List Consumers</h1>
                     </Header>
                 </Grid>
                 <Grid
@@ -852,7 +850,7 @@ const Companies = (props) => {
                             variant="contained"
                             onClick={handleAddNew}
                         >
-                            <Add style={{ marginRight: "5px" }} fontSize="small" /> Add Company
+                            <Add style={{ marginRight: "5px" }} fontSize="small" /> Add Consumer
                         </AddButton>
                     }
                 </Grid>
@@ -864,37 +862,45 @@ const Companies = (props) => {
                             <Box p={4}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} md={4}>
-                                        <InputLabel>Company Erply ID</InputLabel>
+                                        <InputLabel>Company ID</InputLabel>
                                         <TextField
                                             variant="outlined"
-                                            name="company_erply_id"
-                                            value={filterData.company_erply_id}
+                                            name="company_id"
+                                            value={filterData.company_id}
                                             onChange={handleChangeFilter}
                                             onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
                                             fullWidth
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={4}>
-                                        <InputLabel>Company Name</InputLabel>
+                                        <InputLabel>Consumer Name</InputLabel>
                                         <TextField
                                             variant="outlined"
-                                            name="company_name"
-                                            value={filterData.company_name}
+                                            name="consumer_name"
+                                            value={filterData.consumer_name}
                                             onChange={handleChangeFilter}
                                             onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
                                             fullWidth
                                         />
                                     </Grid>
+
                                     <Grid item xs={12} md={4}>
-                                        <InputLabel>Status</InputLabel>
-                                        <TextField
-                                            variant="outlined"
-                                            name="company_status"
-                                            value={filterData.company_status}
-                                            onChange={handleChangeFilter}
-                                            onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
-                                            fullWidth
-                                        />
+                                        <InputLabel>Consumer Active?</InputLabel>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                name="consumer_active"
+                                                value={filterData.consumer_active}
+                                                onChange={handleChangeFilter}
+                                                onKeyDown={e => { if (e.key === "Enter") handleFilter() }}
+                                            >
+                                                <MenuItem value={""}>Select</MenuItem>
+                                                <MenuItem value={"1"}>Active</MenuItem>
+                                                <MenuItem value={"0"}>Inactive</MenuItem>
+
+                                            </Select>
+                                        </FormControl>
+
+
                                     </Grid>
 
 
@@ -920,36 +926,36 @@ const Companies = (props) => {
                     </Collapse>
                 </Grid>
 
-                {submittedData.company_erply_id ||
-                    submittedData.company_name ||
-                    submittedData.company_status ? (
+                {submittedData.company_id ||
+                    submittedData.consumer_name ||
+                    submittedData.consumer_active ? (
                     <Grid item xs={12}>
                         <FilteredBox>
                             <span>Filtered: </span>
-                            {submittedData.company_erply_id && (
+                            {submittedData.company_id && (
                                 <p>
-                                    <span>Company Erply ID: {submittedData.company_erply_id}</span>
+                                    <span>Company Erply ID: {submittedData.company_id}</span>
                                     <Close
                                         fontSize="small"
-                                        onClick={() => handleRemove("company_erply_id")}
+                                        onClick={() => handleRemove("company_id")}
                                     />
                                 </p>
                             )}
-                            {submittedData.company_name && (
+                            {submittedData.consumer_name && (
                                 <p>
-                                    <span>Company Name: {submittedData.company_name}</span>
+                                    <span>Company Name: {submittedData.consumer_name}</span>
                                     <Close
                                         fontSize="small"
-                                        onClick={() => handleRemove("company_name")}
+                                        onClick={() => handleRemove("consumer_name")}
                                     />
                                 </p>
                             )}
-                            {submittedData.company_status && (
+                            {submittedData.consumer_active && (
                                 <p>
-                                    <span>Status: {submittedData.company_status}</span>
+                                    <span>Consumer Active: {submittedData.consumer_active === "1" ? "Active" : "Inactive"}</span>
                                     <Close
                                         fontSize="small"
-                                        onClick={() => handleRemove("company_status")}
+                                        onClick={() => handleRemove("consumer_active")}
                                     />
                                 </p>
                             )}
@@ -963,7 +969,7 @@ const Companies = (props) => {
 
                 <Grid item xs={12}>
                     <TableComponent
-                        name={"Company"}
+                        name={"Consumer"}
                         columns={columns}
                         rows={rows}
                         sort={true}
@@ -987,10 +993,10 @@ const Companies = (props) => {
 
 
 
-            {openDeleteDialog && <DeleteDialog name={"Company"} viewDetails={viewDetails} sendDelete={sendDelete} />}
+            {openDeleteDialog && <DeleteDialog name={"Consumer"} viewDetails={viewDetails} sendDelete={sendDelete} />}
 
             {openEditDialog && (
-                <EditDialog
+                <EditDialogConsumer
                     viewDetails={viewDetails}
                     sendEdit={sendEdit}
                 />
@@ -1014,4 +1020,4 @@ const Companies = (props) => {
     );
 };
 
-export default Companies;
+export default Consumers;

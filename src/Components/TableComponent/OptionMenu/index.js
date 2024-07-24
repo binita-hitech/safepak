@@ -81,7 +81,7 @@ export default function OptionMenu(props) {
           >
 
             {
-            option.name === "allow_update" ? "Update Company" : option.name === "allow_delete" ? "Delete Company" : ""
+            option.name === "allow_update" ? `Update ${props.name}` : option.name === "allow_delete" ? `Delete ${props.name}` : ""
             }
             
           </MenuItem>

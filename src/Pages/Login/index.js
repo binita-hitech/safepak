@@ -102,9 +102,15 @@ const Login = () => {
                 setMessageState("error");
                 setLoading(false);
 
+            }else if (err.response.status === 404) {
+                setOpen(true);
+                setMessage(err.response.data.message);
+                setMessageState("error");
+                setLoading(false);
+
             } else {
                 setOpen(true);
-                setMessage(err.response.message);
+                setMessage(err.response.data.message);
                 setMessageState("error");
                 setLoading(false);
             }

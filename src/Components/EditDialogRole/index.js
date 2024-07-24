@@ -5,7 +5,11 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControl,
     Grid,
+    InputLabel,
+    MenuItem,
+    Select,
     styled,
     TextField,
 } from "@mui/material";
@@ -25,35 +29,37 @@ const StyledHeaderTitle = styled(DialogTitle)(({ theme }) => ({
     },
 }));
 
-const DeleteDialog = (props) => {
+const EditDialogRole = (props) => {
     const [dialogDetails, setDialogDetails] = useState({
         open: true,
         success: false,
     });
-   
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
-        company_name: '',
-        company_erply_id: '',
-        company_email: '',
-        company_address: '',
-        company_phone: '',
+        full_name: '',
+        role_id: '',
+        email: '',
+        address: '',
+        mobile: '',
+        status: '',
     });
 
     useEffect(() => {
         if (props.viewDetails) {
             setFormData({
-                company_name: props.viewDetails.company_name || '',
-                company_erply_id: props.viewDetails.company_erply_id || '',
-                company_email: props.viewDetails.company_email || '',
-                company_address: props.viewDetails.company_address || '',
-                company_phone: props.viewDetails.company_phone || '',
+                full_name: props.viewDetails.full_name || '',
+                role_id: '',
+                email: props.viewDetails.email || '',
+                address: '',
+                mobile: props.viewDetails.mobile || '',
+                status: '',
             });
         }
     }, [props.viewDetails]);
 
 
     useEffect(() => {
-        props.sendDelete(dialogDetails, formData);
+        props.sendEdit(dialogDetails, formData);
     }, [dialogDetails]);
 
 
@@ -65,16 +71,35 @@ const DeleteDialog = (props) => {
     };
 
     const handleYes = () => {
-       
+        if (validate()) {
             setDialogDetails({
                 ...dialogDetails,
                 open: false,
                 success: true,
 
             });
-        
+        }
     };
 
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.full_name) newErrors.full_name = 'Name is required';
+        if (!formData.role_id) newErrors.role_id = 'Role ID is required';
+        if (!formData.email) newErrors.email = 'Email is required';
+        if (formData.status === "") newErrors.status = 'Status is required';
+        if (formData.mobile && formData.mobile.length > 10) newErrors.mobile = 'Phone number should be less than 10 digits';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
 
     return (
         <div>
@@ -86,30 +111,10 @@ const DeleteDialog = (props) => {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <StyledHeaderTitle id="alert-dialog-title">
-                   Delete {props.name}
-                </StyledHeaderTitle>
-                <DialogContent>
-                    <Box pt={3}>
-                        Are you sure you want to delete this {props.name}?
-                    </Box>
-                </DialogContent>
-                <DialogActions styled={{ margin: "5px 10px" }}>
-                    <Button onClick={handleClose} color="error" variant="contained" autoFocus>
-                        No
-                    </Button>
-                    <Button
-                        onClick={handleYes}
-                        color="primary"
-                        variant="contained"
-                        autoFocus
-                    >
-                        Yes
-                    </Button>
-                </DialogActions>
+                
             </Dialog>
         </div>
     );
 };
 
-export default DeleteDialog;
+export default EditDialogRole;
