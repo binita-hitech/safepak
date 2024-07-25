@@ -48,7 +48,8 @@ const EditDialogUser = (props) => {
         if (props.viewDetails) {
             setFormData({
                 full_name: props.viewDetails.full_name || '',
-                role_id: '',
+                user_name: '',
+                role_id: props.viewDetails.role_id || 1,
                 email: props.viewDetails.email || '',
                 address: '',
                 mobile: props.viewDetails.mobile || '',
@@ -86,6 +87,7 @@ const EditDialogUser = (props) => {
         if (!formData.full_name) newErrors.full_name = 'Name is required';
         if (!formData.role_id) newErrors.role_id = 'Role ID is required';
         if (!formData.email) newErrors.email = 'Email is required';
+        if (!formData.user_name) newErrors.email = 'Username is required';
         if (formData.status === "") newErrors.status = 'Status is required';
         if (formData.mobile && formData.mobile.length > 10) newErrors.mobile = 'Phone number should be less than 10 digits';
         setErrors(newErrors);
@@ -117,7 +119,7 @@ const EditDialogUser = (props) => {
                 <DialogContent>
                     <Box pt={3}>
 
-                        <TextField
+                        {/* <TextField
                             required
                             label="Role ID"
                             name="role_id"
@@ -128,7 +130,7 @@ const EditDialogUser = (props) => {
                             helperText={errors.role_id}
                             fullWidth
                             margin="normal"
-                        />
+                        /> */}
                         <TextField
                             required
                             label="Name"
@@ -140,6 +142,19 @@ const EditDialogUser = (props) => {
                             fullWidth
                             margin="normal"
                         />
+                        {props.viewDetails.id &&
+                            <TextField
+                                required
+                                label="Username"
+                                name="user_name"
+                                value={formData.user_name}
+                                onChange={handleChange}
+                                error={!!errors.user_name}
+                                helperText={errors.user_name}
+                                fullWidth
+                                margin="normal"
+                            />
+                        }
                         <TextField
                             required
                             label="Email"
@@ -152,6 +167,23 @@ const EditDialogUser = (props) => {
                             fullWidth
                             margin="normal"
                         />
+                        <FormControl required fullWidth margin="normal">
+                            <InputLabel>Status</InputLabel>
+
+                            <Select
+                                label="Status"
+                                name="status"
+                                value={formData.status}
+                                onChange={handleChange}
+                                error={!!errors.status}
+                                helperText={errors.status}
+                            >
+                                <MenuItem value={""}>Select</MenuItem>
+                                <MenuItem value={1}>Active</MenuItem>
+                                <MenuItem value={0}>Inactive</MenuItem>
+
+                            </Select>
+                        </FormControl>
                         <TextField
                             label="Address"
                             name="address"
@@ -170,23 +202,7 @@ const EditDialogUser = (props) => {
                             fullWidth
                             margin="normal"
                         />
-                        <FormControl fullWidth margin="normal">
-                            <InputLabel>Status</InputLabel>
 
-                            <Select
-                                label="Status"
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                                error={!!errors.status}
-                                helperText={errors.status}
-                            >   
-                                <MenuItem value={""}>Select</MenuItem>
-                                <MenuItem value={1}>Active</MenuItem>
-                                <MenuItem value={0}>Inactive</MenuItem>
-
-                            </Select>
-                        </FormControl>
                     </Box>
                 </DialogContent>
                 <DialogActions styled={{ margin: "5px 10px" }}>

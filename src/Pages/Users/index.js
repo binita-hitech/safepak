@@ -35,7 +35,7 @@ const login = localStorage.getItem("login");
 const loginData = JSON.parse(login);
 
 const columns = [
-    { id: "id", name: "SN" },
+    { id: "id", name: "ID" },
     // { id: "company_erply_id", name: "Company ID" },
     { id: "full_name", name: "Full Name" },
     { id: "email", name: "Email" },
@@ -920,7 +920,7 @@ const Users = (props) => {
 
                                 {submittedData.full_name && (
                                     <p>
-                                        <span>Company Name: {submittedData.full_name}</span>
+                                        <span>Name: {submittedData.full_name}</span>
                                         <Close
                                             fontSize="small"
                                             onClick={() => handleRemove("full_name")}

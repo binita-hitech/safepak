@@ -36,7 +36,7 @@ const login = localStorage.getItem("login");
 const loginData = JSON.parse(login);
 
 const columns = [
-  { id: "id", name: "SN" },
+  { id: "id", name: "ID" },
   // { id: "company_erply_id", name: "Company ID" },
   { id: "role_name", name: "Full Name" },
 
@@ -876,9 +876,9 @@ const Roles = (props) => {
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
-                  <InputLabel>Status</InputLabel>
+                    <InputLabel>Status</InputLabel>
                     <FormControl fullWidth>
-                      <Select              
+                      <Select
                         name="status"
                         value={filterData.status}
                         onChange={handleChangeFilter}
