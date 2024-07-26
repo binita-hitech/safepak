@@ -65,8 +65,7 @@ const EditDialogRole = (props) => {
         company_id: "",
         name: '',
         permissions: [
-            { id: "", name: '', status: 0 },
-            { id: "", name: '', status: 0 },
+            
         ],
     });
 
@@ -76,8 +75,6 @@ const EditDialogRole = (props) => {
 
                 name: props.viewDetails.role_name || '',
                 permissions: props.viewDetails.permissions || [
-                    { id: 1, status: 0 },
-                    { id: 2, status: 0 },
                 ],
             });
         }
@@ -118,13 +115,16 @@ const EditDialogRole = (props) => {
     };
 
     const handlePermissionChange = (id, status) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            permissions: prevData.permissions.map(permission =>
-                permission.id === id ? { ...permission, status } : permission
-            ),
-        }));
+       
+            setFormData((prevData) => ({
+                ...prevData,
+                permissions: prevData.permissions.map(permission =>
+                    permission.id === id ? { ...permission, status } : permission
+                ),
+            }));
+        
     };
+
 
     const addPermission = () => {
         setFormData((prevData) => ({
@@ -142,6 +142,8 @@ const EditDialogRole = (props) => {
             permissions: prevData.permissions.filter(permission => permission.id !== id),
         }));
     };
+
+    console.log("form data", formData)
 
     return (
         <div>
@@ -200,7 +202,7 @@ const EditDialogRole = (props) => {
                                     <div key={index} style={{ marginBottom: '10px' }}>
                                         <label>
                                             <FlexContent>
-                                                {props.viewDetails.id ? (
+                                                {props.viewDetails.id && permission.name ? (
                                                     <FlexInnerTitle>
                                                         <span>Permission - {permission.name}</span> <span> : </span>
                                                     </FlexInnerTitle>
@@ -209,12 +211,13 @@ const EditDialogRole = (props) => {
                                                     <FlexInnerTitle>
                                                         <span><TextField
                                                             required
+                                                            disabled
                                                             label="Permission"
                                                             type="number"
                                                             name="id"
                                                             value={permission.id}
                                                             onChange={(e) =>
-                                                                handlePermissionChange(permission.id, parseInt(e.target.value))
+                                                                handlePermissionChange(parseInt(e.target.value), 0)
                                                             }
                                                             sx={{ marginBottom: '10px', width: "200px" }}
 
